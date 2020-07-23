@@ -25,6 +25,7 @@ connection.connect(function (err) {
 
 // function which prompts the user for what action they should take
 function start() {
+    console.log("\n\n\n\n\n\n\n\n")
     inquirer
         .prompt({
             name: "toDo",
@@ -80,6 +81,7 @@ function viewAllEmployees() {
     connection.query(query, function (err, res) {
         if (err) throw err;
         console.table(res);
+        start();
     })
 }
 
@@ -114,6 +116,7 @@ function viewAllEmployeesByRole() {
                     connection.query(query, function (err, res) {
                         if (err) throw err;
                         console.table(res);
+                        start();
                     })
                 })
             })
@@ -151,6 +154,7 @@ function viewAllEmployeesByDepartment() {
                     connection.query(query, function (err, res) {
                         if (err) throw err;
                         console.table(res);
+                        start();
                     })
                 })
             })
@@ -227,6 +231,7 @@ function addAnEmployee() {
                                     function (err) {
                                         if (err) throw err;
                                         console.log(`${fullName} was successfully added as an employee`)
+                                        start();
                                     }
                                 )
                             })
@@ -282,6 +287,7 @@ function addARole() {
                                 function (err) {
                                     if (err) throw err;
                                     console.log(`${role} was successfully added as a role`)
+                                    start();
                                 }
                             )
                         })
@@ -306,6 +312,7 @@ function addADepartment() {
                 function (err) {
                     if (err) throw err;
                     console.log(`${department} was successfully added as a department`)
+                    start();
                 }
             )
         })
@@ -318,43 +325,44 @@ function updateEmployeeRole() {
         for (i in res) {
             names.push(res[i].fullName)
         }
-        connection.query(`SELECT DISTINCT title FROM role`, function(err, res) {
+        connection.query(`SELECT DISTINCT title FROM role`, function (err, res) {
             if (err) throw err;
             roles = [];
             for (i in res) {
                 roles.push(res[i].title)
             }
             inquirer
-            .prompt([
-                {
-                    name: "employee",
-                    type: "rawlist",
-                    message: "Which employee is getting an updated role?",
-                    choices: names
-                },
-                {
-                    name: "role",
-                    type: "rawlist",
-                    message: "What is the new role of this employee?",
-                    choices: roles
-                }
-            ])
-            .then(function (answer) {
-                employee = answer.employee;
-                role = answer.role;
-                connection.query(`SELECT id FROM role WHERE title='${role}'`, function(err, res) {
-                    if (err) throw err;
-                    role_id = res[0].id;
-                    connection.query(`SELECT id FROM employees WHERE CONCAT(employees.first_name, ' ', employees.last_name)='${employee}'`, function(err, res) {
+                .prompt([
+                    {
+                        name: "employee",
+                        type: "rawlist",
+                        message: "Which employee is getting an updated role?",
+                        choices: names
+                    },
+                    {
+                        name: "role",
+                        type: "rawlist",
+                        message: "What is the new role of this employee?",
+                        choices: roles
+                    }
+                ])
+                .then(function (answer) {
+                    employee = answer.employee;
+                    role = answer.role;
+                    connection.query(`SELECT id FROM role WHERE title='${role}'`, function (err, res) {
                         if (err) throw err;
-                        employee_id = res[0].id;
-                        connection.query(`UPDATE employees SET role_id = '${role_id}' WHERE id='${employee_id}'`, function(err) {
+                        role_id = res[0].id;
+                        connection.query(`SELECT id FROM employees WHERE CONCAT(employees.first_name, ' ', employees.last_name)='${employee}'`, function (err, res) {
                             if (err) throw err;
-                            console.log(`Successfully updated ${employee}'s role to ${role}`);
+                            employee_id = res[0].id;
+                            connection.query(`UPDATE employees SET role_id = '${role_id}' WHERE id='${employee_id}'`, function (err) {
+                                if (err) throw err;
+                                console.log(`Successfully updated ${employee}'s role to ${role}`);
+                                start();
+                            })
                         })
                     })
                 })
-            })
         })
     })
 }
