@@ -90,9 +90,8 @@ function viewAllEmployeesByRole() {
         if (err) throw err;
         roles = [];
         for (i in res) {
-            roles.push(res[i].title)
+            roles.push(res[i].title);
         }
-        console.log(roles);
         inquirer
             .prompt({
                 name: "role",
@@ -102,11 +101,9 @@ function viewAllEmployeesByRole() {
             })
             .then(function (answer) {
                 selectedRole = answer.role;
-                console.log(selectedRole);
                 connection.query(`SELECT id FROM role WHERE title='${selectedRole}'`, function (err, res) {
                     if (err) throw err;
                     var selectedRole_id = res[0].id;
-                    console.log(selectedRole_id);
                     query =
                         `SELECT employees1.id AS id, employees1.first_name, employees1.last_name, role.title, department.name AS department, role.salary, CONCAT (employees2.first_name, " ", employees2.last_name) AS manager
                         FROM employees AS employees1
@@ -114,11 +111,127 @@ function viewAllEmployeesByRole() {
                         INNER JOIN department ON role.department_id=department.id
                         LEFT JOIN employees AS employees2 ON employees1.manager_id=employees2.id
                         WHERE employees1.role_id=${selectedRole_id}`
-                    connection.query(query, function(err, res) {
+                    connection.query(query, function (err, res) {
                         if (err) throw err;
                         console.table(res);
                     })
                 })
             })
     });
+}
+
+function viewAllEmployeesByDepartment() {
+    var query =
+        `SELECT DISTINCT name FROM department`
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+        departments = [];
+        for (i in res) {
+            departments.push(res[i].name);
+        }
+        inquirer
+            .prompt({
+                name: "department",
+                type: "rawlist",
+                message: "Which department would you like to search for?",
+                choices: departments
+            })
+            .then(function (answer) {
+                selectedDepartment = answer.department;
+                connection.query(`SELECT id FROM department WHERE name='${selectedDepartment}'`, function (err, res) {
+                    if (err) throw err;
+                    var selectedDepartment_id = res[0].id;
+                    query =
+                        `SELECT employees1.id AS id, employees1.first_name, employees1.last_name, role.title, department.name AS department, role.salary, CONCAT (employees2.first_name, " ", employees2.last_name) AS manager
+                        FROM employees AS employees1
+                        INNER JOIN role ON role.id=employees1.role_id
+                        INNER JOIN department ON role.department_id=department.id
+                        LEFT JOIN employees AS employees2 ON employees1.manager_id=employees2.id
+                        WHERE role.department_id=${selectedDepartment_id}`
+                    connection.query(query, function (err, res) {
+                        if (err) throw err;
+                        console.table(res);
+                    })
+                })
+            })
+    })
+}
+
+function addAnEmployee() {
+    inquirer
+        .prompt([
+            {
+                name: "firstName",
+                type: "input",
+                message: "What is this employee's first name?"
+            },
+            {
+                name: "lastName",
+                type: "input",
+                message: "What is this employee's last name?"
+            }
+        ])
+        .then(function (answer) {
+            var firstName = answer.firstName;
+            var lastName = answer.lastName;
+            var fullName = `${firstName} ${lastName}`;
+            connection.query(`SELECT DISTINCT title FROM role`, function (err, res) {
+                if (err) throw err;
+                roles = [];
+                for (i in res) {
+                    roles.push(res[i].title);
+                }
+
+                connection.query(`SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS existingEmployeeName FROM employees`, function (err, res) {
+                    if (err) throw err;
+                    names = [];
+                    for (i in res) {
+                        names.push(res[i].existingEmployeeName)
+                    }
+                    names.push("Doesn't have a manager")
+                    inquirer
+                        .prompt([
+                            {
+                                name: "role",
+                                type: "rawlist",
+                                message: `Which of these is ${fullName}'s role?`,
+                                choices: roles
+                            },
+                            {
+                                name: "manager",
+                                type: "rawlist",
+                                message: `Who is ${fullName}'s manager?`,
+                                choices: names
+                            }
+                        ])
+                        .then(function (answer) {
+                            newEmployeeRole = answer.role;
+                            newEmployeeManager = answer.manager;
+                            if (newEmployeeManager === "Doesn't have a manager") {
+                                newEmployeeManager_id = null;
+                            } else {
+                                connection.query(`SELECT id FROM employees WHERE CONCAT(employees.first_name, ' ', employees.last_name)='${newEmployeeManager}'`, function(err, res) {
+                                    if (err) throw err;
+                                    newEmployeeManager_id = res[0].id;
+                                })
+                            }
+                            connection.query(`SELECT id FROM role WHERE title='${newEmployeeRole}'`, function (err, res) {
+                                newEmployeeRole_id = res[0].id;
+                                connection.query(`INSERT INTO employees SET ?`,
+                                {
+                                    first_name: firstName,
+                                    last_name: lastName,
+                                    role_id: newEmployeeRole_id,
+                                    manager_id: newEmployeeManager_id
+                                },
+                                function(err) {
+                                    if (err) throw err;
+                                    console.log(`${fullName} was successfully added as an employee`)
+                                }
+                                )
+                            })
+                        })
+                })
+            })
+        })
 }
