@@ -241,7 +241,7 @@ function addARole() {
         .prompt({
             name: "role",
             type: "input",
-            message: "What is the name of the role you wish to add"
+            message: "What is the name of the role you want to add"
         })
         .then(function (answer) {
             role = answer.role;
@@ -287,5 +287,26 @@ function addARole() {
                         })
                     })
             })
+        })
+}
+
+function addADepartment() {
+    inquirer
+        .prompt({
+            name: "department",
+            type: "input",
+            message: "What is the name of the department you want to add?"
+        })
+        .then(function (answer) {
+            department = answer.department;
+            connection.query(`INSERT INTO department SET ?`,
+            {
+                name: department
+            },
+            function(err) {
+                if (err) throw err;
+                console.log(`${department} was successfully added as a department`)
+            }
+            )
         })
 }
