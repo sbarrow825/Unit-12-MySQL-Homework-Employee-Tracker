@@ -210,7 +210,7 @@ function addAnEmployee() {
                             if (newEmployeeManager === "Doesn't have a manager") {
                                 newEmployeeManager_id = null;
                             } else {
-                                connection.query(`SELECT id FROM employees WHERE CONCAT(employees.first_name, ' ', employees.last_name)='${newEmployeeManager}'`, function(err, res) {
+                                connection.query(`SELECT id FROM employees WHERE CONCAT(employees.first_name, ' ', employees.last_name)='${newEmployeeManager}'`, function (err, res) {
                                     if (err) throw err;
                                     newEmployeeManager_id = res[0].id;
                                 })
@@ -218,20 +218,74 @@ function addAnEmployee() {
                             connection.query(`SELECT id FROM role WHERE title='${newEmployeeRole}'`, function (err, res) {
                                 newEmployeeRole_id = res[0].id;
                                 connection.query(`INSERT INTO employees SET ?`,
-                                {
-                                    first_name: firstName,
-                                    last_name: lastName,
-                                    role_id: newEmployeeRole_id,
-                                    manager_id: newEmployeeManager_id
-                                },
-                                function(err) {
-                                    if (err) throw err;
-                                    console.log(`${fullName} was successfully added as an employee`)
-                                }
+                                    {
+                                        first_name: firstName,
+                                        last_name: lastName,
+                                        role_id: newEmployeeRole_id,
+                                        manager_id: newEmployeeManager_id
+                                    },
+                                    function (err) {
+                                        if (err) throw err;
+                                        console.log(`${fullName} was successfully added as an employee`)
+                                    }
                                 )
                             })
                         })
                 })
+            })
+        })
+}
+
+function addARole() {
+    inquirer
+        .prompt({
+            name: "role",
+            type: "input",
+            message: "What is the name of the role you wish to add"
+        })
+        .then(function (answer) {
+            role = answer.role;
+            var query =
+                `SELECT DISTINCT name FROM department`
+            connection.query(query, function (err, res) {
+                if (err) throw err;
+                departments = [];
+                for (i in res) {
+                    departments.push(res[i].name);
+                }
+                inquirer
+                    .prompt([
+                        {
+                            name: "salary",
+                            type: "input",
+                            message: `What is the yearly salary for a ${role}?`
+                        },
+                        {
+                            name: "department",
+                            type: "rawlist",
+                            message: `Which department does the role ${role} belong to?`,
+                            choices: departments
+                        }
+                    ])
+                    .then(function (answer) {
+                        salary = answer.salary;
+                        department = answer.department;
+                        connection.query(`SELECT id FROM department WHERE name='${department}'`, function(err, res) {
+                            if (err) throw err;
+                            department_id = res[0].id;
+                            connection.query(`INSERT INTO role SET ?`,
+                            {
+                                title: role,
+                                salary: salary,
+                                department_id: department_id
+                            },
+                            function(err) {
+                                if (err) throw err;
+                                console.log(`${role} was successfully added as a role`)
+                            }
+                            )
+                        })
+                    })
             })
         })
 }
