@@ -1,135 +1,203 @@
-# Unit 12 MySQL Homework: Employee Tracker
+# Unit 12: MySQL Employee Tracker
 
-Developers are often tasked with creating interfaces that make it easy for non-developers to view and interact with information stored in databases. Often these interfaces are known as **C**ontent **M**anagement **S**ystems. In this homework assignment, your challenge is to architect and build a solution for managing a company's employees using node, inquirer, and MySQL.
+## Description
 
-## Instructions
+npm Inquirer CLI application for keeping track of all employees in your business
 
-Design the following database schema containing three tables:
+## Table of Contents
 
-![Database Schema](Assets/schema.png)
+* [Installation](#Installation)
+* [Usage](#Usage)
+* [License](#License)
+* [Dependencies](#Dependencies)
+* [Contributions](#Contributions)
+* [Tests](#Tests)
+* [Questions](#Questions)
 
-* **department**:
+## Installation
 
-  * **id** - INT PRIMARY KEY
-  * **name** - VARCHAR(30) to hold department name
+Make sure that you've downloaded [Node.js from the nodejs.org website](https://nodejs.org/en/download/), then run the following command in the working directory of this project to install the necessary node modules
 
-* **role**:
-
-  * **id** - INT PRIMARY KEY
-  * **title** -  VARCHAR(30) to hold role title
-  * **salary** -  DECIMAL to hold role salary
-  * **department_id** -  INT to hold reference to department role belongs to
-
-* **employee**:
-
-  * **id** - INT PRIMARY KEY
-  * **first_name** - VARCHAR(30) to hold employee first name
-  * **last_name** - VARCHAR(30) to hold employee last name
-  * **role_id** - INT to hold reference to role employee has
-  * **manager_id** - INT to hold reference to another employee that manager of the current employee. This field may be null if the employee has no manager
-  
-Build a command-line application that at a minimum allows the user to:
-
-  * Add departments, roles, employees
-
-  * View departments, roles, employees
-
-  * Update employee roles
-
-Bonus points if you're able to:
-
-  * Update employee managers
-
-  * View employees by manager
-
-  * Delete departments, roles, and employees
-
-  * View the total utilized budget of a department -- ie the combined salaries of all employees in that department
-
-We can frame this challenge as follows:
-
-```
-As a business owner
-I want to be able to view and manage the departments, roles, and employees in my company
-So that I can organize and plan my business
+```sh
+npm install
 ```
 
-How do you deliver this? Here are some guidelines:
+Also, make sure that you've downloaded [MySQL from dev.mysql.com](https://dev.mysql.com/downloads/windows/installer/8.0.html) for your particular OS and installed the MySQL workbench along with it.
 
-* Use the [MySQL](https://www.npmjs.com/package/mysql) NPM package to connect to your MySQL database and perform queries.
+## Usage
 
-* Use [InquirerJs](https://www.npmjs.com/package/inquirer/v/0.2.3) NPM package to interact with the user via the command-line.
+In order to run the program, first copy the schema.sql file into your MySQL workbench and generate a database by hitting the lightning bolt on the top of the window. Then type the following command into your command line with this project in your current working directory in order to run the application.
 
-* Use [console.table](https://www.npmjs.com/package/console.table) to print MySQL rows to the console. There is a built-in version of `console.table`, but the NPM package formats the data a little better for our purposes.
+```sh
+node app.js
+```
 
-* You may wish to have a separate file containing functions for performing specific SQL queries you'll need to use. Could a constructor function or a class be helpful for organizing these?
+The application is a CLI app that uses npm inquirer to continuously prompt the user for information to track employee information on a MySQL database in order to keep all of your employees' information organized and easy to access.
 
-* You will need to perform a variety of SQL JOINS to complete this assignment, and it's recommended you review the week's activities if you need a refresher on this.
+## License
 
-![Employee Tracker](Assets/employee-tracker.gif)
+![MIT License](https://img.shields.io/npm/l/inquirer)
 
-### Hints
+## Dependencies
 
-* You may wish to include a `seed.sql` file to pre-populate your database. This will make development of individual features much easier.
+List of dependency statuses for all packages used in this project
 
-* Focus on getting the basic functionality completed before working on more advanced features.
+* npm Inquirer ![](https://img.shields.io/librariesio/release/npm/inquirer)
+* npm mysql ![](https://img.shields.io/librariesio/release/npm/mysql)
+* npm express ![](https://img.shields.io/librariesio/release/npm/express)
 
-* Review the week's activities for a refresher on MySQL.
+## Contributions
 
-* Check out [SQL Bolt](https://sqlbolt.com/) for some extra MySQL help.
+The following in a copy of the [Contributor Covenant v2.0](https://www.contributor-covenant.org/). Please read before contributing to understand contribution guidelines.
 
-## Minimum Requirements
+### Our Pledge
 
-* Functional application.
+We as members, contributors, and leaders pledge to make participation in our
+community a harassment-free experience for everyone, regardless of age, body
+size, visible or invisible disability, ethnicity, sex characteristics, gender
+identity and expression, level of experience, education, socio-economic status,
+nationality, personal appearance, race, religion, or sexual identity
+and orientation.
 
-* GitHub repository with a unique name and a README describing the project.
+We pledge to act and interact in ways that contribute to an open, welcoming,
+diverse, inclusive, and healthy community.
 
-* The command-line application should allow users to:
+### Our Standards
 
-  * Add departments, roles, employees
+Examples of behavior that contributes to a positive environment for our
+community include:
 
-  * View departments, roles, employees
+* Demonstrating empathy and kindness toward other people
+* Being respectful of differing opinions, viewpoints, and experiences
+* Giving and gracefully accepting constructive feedback
+* Accepting responsibility and apologizing to those affected by our mistakes,
+  and learning from the experience
+* Focusing on what is best not just for us as individuals, but for the
+  overall community
 
-  * Update employee roles
+Examples of unacceptable behavior include:
 
-## Bonus
+* The use of sexualized language or imagery, and sexual attention or
+  advances of any kind
+* Trolling, insulting or derogatory comments, and personal or political attacks
+* Public or private harassment
+* Publishing others' private information, such as a physical or email
+  address, without their explicit permission
+* Other conduct which could reasonably be considered inappropriate in a
+  professional setting
 
-* The command-line application should allow users to:
+### Enforcement Responsibilities
 
-  * Update employee managers
+Community leaders are responsible for clarifying and enforcing our standards of
+acceptable behavior and will take appropriate and fair corrective action in
+response to any behavior that they deem inappropriate, threatening, offensive,
+or harmful.
 
-  * View employees by manager
+Community leaders have the right and responsibility to remove, edit, or reject
+comments, commits, code, wiki edits, issues, and other contributions that are
+not aligned to this Code of Conduct, and will communicate reasons for moderation
+decisions when appropriate.
 
-  * Delete departments, roles, and employees
+### Scope
 
-  * View the total utilized budget of a department -- ie the combined salaries of all employees in that department
+This Code of Conduct applies within all community spaces, and also applies when
+an individual is officially representing the community in public spaces.
+Examples of representing our community include using an official e-mail address,
+posting via an official social media account, or acting as an appointed
+representative at an online or offline event.
 
-## Commit Early and Often
+### Enforcement
 
-One of the most important skills to master as a web developer is version control. Building the habit of committing via Git is important for two reasons:
+Instances of abusive, harassing, or otherwise unacceptable behavior may be
+reported to the community leaders responsible for enforcement at
+sbarrow825@berkeley.edu
 
-* Your commit history is a signal to employers that you are actively working on projects and learning new skills.
+All complaints will be reviewed and investigated promptly and fairly.
 
-* Your commit history allows you to revert your codebase in the event that you need to return to a previous state.
+All community leaders are obligated to respect the privacy and security of the
+reporter of any incident.
 
-Follow these guidelines for committing:
+#### Enforcement Guidelines
 
-* Make single-purpose commits for related changes to ensure a clean, manageable history. If you are fixing two issues, make two commits.
+Community leaders will follow these Community Impact Guidelines in determining
+the consequences for any action they deem in violation of this Code of Conduct:
 
-* Write descriptive, meaningful commit messages so that you and anyone else looking at your repository can easily understand its history.
+#### 1. Correction
 
-* Don't commit half-done work, for the sake of your collaborators (and your future self!).
+**Community Impact**: Use of inappropriate language or other behavior deemed
+unprofessional or unwelcome in the community.
 
-* Test your application before you commit to ensure functionality at every step in the development process.
+**Consequence**: A private, written warning from community leaders, providing
+clarity around the nature of the violation and an explanation of why the
+behavior was inappropriate. A public apology may be requested.
 
-We would like you to have well over 200 commits by graduation, so commit early and often!
+#### 2. Warning
 
+**Community Impact**: A violation through a single incident or series
+of actions.
 
-## Submission on BCS
+**Consequence**: A warning with consequences for continued behavior. No
+interaction with the people involved, including unsolicited interaction with
+those enforcing the Code of Conduct, for a specified period of time. This
+includes avoiding interactions in community spaces as well as external channels
+like social media. Violating these terms may lead to a temporary or
+permanent ban.
 
-You are required to submit the following:
+#### 3. Temporary Ban
 
-* The URL of the GitHub repository
+**Community Impact**: A serious violation of community standards, including
+sustained inappropriate behavior.
 
-- - -
-© 2019 Trilogy Education Services, a 2U, Inc. brand. All Rights Reserved.
+**Consequence**: A temporary ban from any sort of interaction or public
+communication with the community for a specified period of time. No public or
+private interaction with the people involved, including unsolicited interaction
+with those enforcing the Code of Conduct, is allowed during this period.
+Violating these terms may lead to a permanent ban.
+
+#### 4. Permanent Ban
+
+**Community Impact**: Demonstrating a pattern of violation of community
+standards, including sustained inappropriate behavior,  harassment of an
+individual, or aggression toward or disparagement of classes of individuals.
+
+**Consequence**: A permanent ban from any sort of public interaction within
+the community.
+
+### Attribution
+
+This Code of Conduct is adapted from the [Contributor Covenant][homepage],
+version 2.0, available at
+https://www.contributor-covenant.org/version/2/0/code_of_conduct.html.
+
+Community Impact Guidelines were inspired by [Mozilla's code of conduct
+enforcement ladder](https://github.com/mozilla/diversity).
+
+[homepage]: https://www.contributor-covenant.org
+
+For answers to common questions about this code of conduct, see the FAQ at
+https://www.contributor-covenant.org/faq. Translations are available at
+https://www.contributor-covenant.org/translations.
+
+## Tests
+
+The following is a gif of the terminal inputs used to show all employees in the database
+
+![viewAllEmployees](Assets/viewAllEmployees.gif)
+
+The following is a series of gifs showing the terminal inputs used to add new employees into the database
+
+![addNewEmployees1](Assets/addNewEmployees1.gif)
+![addNewEmployees2](Assets/addNewEmployees2.gif)
+![addNewEmployees3](Assets/addNewEmployees3.gif)
+![addNewEmployees4](Assets/addNewEmployees4.gif)
+
+Now that example Smith has been added, we see his name appear when we view all employees as show below
+
+![addNewEmployees5](Assets/addNewEmployees5.gif)
+
+## Questions
+
+![Github Profile Picture](https://github.com/sbarrow825.png)
+
+For any questions concerning this project, please feel free to email me at sbarrow825@berkeley.edu
+
