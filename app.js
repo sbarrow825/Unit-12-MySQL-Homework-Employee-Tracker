@@ -270,19 +270,19 @@ function addARole() {
                     .then(function (answer) {
                         salary = answer.salary;
                         department = answer.department;
-                        connection.query(`SELECT id FROM department WHERE name='${department}'`, function(err, res) {
+                        connection.query(`SELECT id FROM department WHERE name='${department}'`, function (err, res) {
                             if (err) throw err;
                             department_id = res[0].id;
                             connection.query(`INSERT INTO role SET ?`,
-                            {
-                                title: role,
-                                salary: salary,
-                                department_id: department_id
-                            },
-                            function(err) {
-                                if (err) throw err;
-                                console.log(`${role} was successfully added as a role`)
-                            }
+                                {
+                                    title: role,
+                                    salary: salary,
+                                    department_id: department_id
+                                },
+                                function (err) {
+                                    if (err) throw err;
+                                    console.log(`${role} was successfully added as a role`)
+                                }
                             )
                         })
                     })
@@ -300,13 +300,61 @@ function addADepartment() {
         .then(function (answer) {
             department = answer.department;
             connection.query(`INSERT INTO department SET ?`,
-            {
-                name: department
-            },
-            function(err) {
-                if (err) throw err;
-                console.log(`${department} was successfully added as a department`)
-            }
+                {
+                    name: department
+                },
+                function (err) {
+                    if (err) throw err;
+                    console.log(`${department} was successfully added as a department`)
+                }
             )
         })
+}
+
+function updateEmployeeRole() {
+    connection.query(`SELECT CONCAT(employees.first_name, ' ', employees.last_name) as fullName FROM employees`, function (err, res) {
+        if (err) throw err;
+        names = [];
+        for (i in res) {
+            names.push(res[i].fullName)
+        }
+        connection.query(`SELECT DISTINCT title FROM role`, function(err, res) {
+            if (err) throw err;
+            roles = [];
+            for (i in res) {
+                roles.push(res[i].title)
+            }
+            inquirer
+            .prompt([
+                {
+                    name: "employee",
+                    type: "rawlist",
+                    message: "Which employee is getting an updated role?",
+                    choices: names
+                },
+                {
+                    name: "role",
+                    type: "rawlist",
+                    message: "What is the new role of this employee?",
+                    choices: roles
+                }
+            ])
+            .then(function (answer) {
+                employee = answer.employee;
+                role = answer.role;
+                connection.query(`SELECT id FROM role WHERE title='${role}'`, function(err, res) {
+                    if (err) throw err;
+                    role_id = res[0].id;
+                    connection.query(`SELECT id FROM employees WHERE CONCAT(employees.first_name, ' ', employees.last_name)='${employee}'`, function(err, res) {
+                        if (err) throw err;
+                        employee_id = res[0].id;
+                        connection.query(`UPDATE employees SET role_id = '${role_id}' WHERE id='${employee_id}'`, function(err) {
+                            if (err) throw err;
+                            console.log(`Successfully updated ${employee}'s role to ${role}`);
+                        })
+                    })
+                })
+            })
+        })
+    })
 }
